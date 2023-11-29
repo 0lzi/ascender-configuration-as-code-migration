@@ -1,6 +1,6 @@
 ---
 - name: Import config as code info to AWX, AAP, or Ascender
-  hosts: save-files
+  hosts: localhost
   gather_facts: false
   vars:
     # Import host is the server name for the host I'm placing the new configs ones
@@ -59,19 +59,20 @@
     - name: Change file permissions on credential-type shell script
       when: item == "credential_types"
       ansible.builtin.file:
-        path: "{{ playbook_dir }}/credential-types-fix.sh"
+        path: "{{ config_dir }}/credential-types-fix.sh"
         mode: '0777'
       loop: "{{ export_objects }}"
 
+
     - name: Use shell script to modify credential types file
       when: item == "credential_types"
-      ansible.builtin.shell: "{{ playbook_dir }}/credential-types-fix.sh {{ config_dir }}/credential_types.yml"
+      ansible.builtin.shell: "{{ config_dir }}/credential-types-fix.sh {{ config_dir }}/config/credential_types.yml"
       loop: "{{ export_objects }}"
 
     - name: Fix credentials file by removing password fields
       when: item == "credentials"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/credentials.yml"
+        path: "{{ config_dir }}/config/credentials.yml"
         regexp: '.*password:.*'
         replace: ''
       loop: "{{ export_objects }}"
@@ -79,7 +80,7 @@
     - name: Fix wokflow job templates by removing any lines with null
       when: item == "workflow_job_templates"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/workflow_job_templates.yml"
+        path: "{{ config_dir }}/config/workflow_job_templates.yml"
         regexp: '.*null.*\n'
         replace: ''
       loop: "{{ export_objects }}"
@@ -87,7 +88,7 @@
     - name: Fix schedules by removing any lines with null
       when: item == "schedules"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/schedules.yml"
+        path: "{{ config_dir }}/config/schedules.yml"
         regexp: '.*null.*\n'
         replace: ''
       loop: "{{ export_objects }}"
@@ -95,7 +96,7 @@
     - name: Fix project file by removing null credentials
       when: item == "credentials"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/projects.yml"
+        path: "{{ config_dir }}/config/projects.yml"
         regexp: ' +credential: null'
         replace: ''
       loop: "{{ export_objects }}"
@@ -103,7 +104,7 @@
     - name: Fix organizations by removing empty EE entries
       when: item == "organizations"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/organizations.yml"
+        path: "{{ config_dir }}/config/organizations.yml"
         regexp: ' +execution_environments: \[\]'
         replace: ''
       loop: "{{ export_objects }}"
@@ -111,7 +112,7 @@
     - name: Fix organizations by removing null default environment
       when: item == "organizations"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/organizations.yml"
+        path: "{{ config_dir }}/config/organizations.yml"
         regexp: ' +default_environment: null'
         replace: ''
       loop: "{{ export_objects }}"
@@ -119,7 +120,7 @@
     - name: Fix execution environments file by removing null organizations
       when: item == "execution_environments"
       ansible.builtin.replace:
-        path: "{{ config_dir }}/execution_environments.yml"
+        path: "{{ config_dir }}/config/execution_environments.yml"
         regexp: ' +organization: null'
         replace: ''
       loop: "{{ export_objects }}"
