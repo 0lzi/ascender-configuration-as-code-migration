@@ -1,6 +1,6 @@
 ---
 - name: Import config as code info to AWX, AAP, or Ascender
-  hosts: localhost
+  hosts: save-files
   gather_facts: false
   vars:
     # Import host is the server name for the host I'm placing the new configs ones
