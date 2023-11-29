@@ -65,13 +65,13 @@
 
     - name: Use shell script to modify credential types file
       when: item == "credential_types"
-      ansible.builtin.shell: "{{ playbook_dir }}/credential-types-fix.sh {{ playbook_dir }}/configs/credential_types.yml"
+      ansible.builtin.shell: "{{ playbook_dir }}/credential-types-fix.sh {{ config_dir }}/credential_types.yml"
       loop: "{{ export_objects }}"
 
     - name: Fix credentials file by removing password fields
       when: item == "credentials"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/credentials.yml"
+        path: "{{ config_dir }}/credentials.yml"
         regexp: '.*password:.*'
         replace: ''
       loop: "{{ export_objects }}"
@@ -79,7 +79,7 @@
     - name: Fix wokflow job templates by removing any lines with null
       when: item == "workflow_job_templates"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/workflow_job_templates.yml"
+        path: "{{ config_dir }}/workflow_job_templates.yml"
         regexp: '.*null.*\n'
         replace: ''
       loop: "{{ export_objects }}"
@@ -87,7 +87,7 @@
     - name: Fix schedules by removing any lines with null
       when: item == "schedules"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/schedules.yml"
+        path: "{{ config_dir }}/schedules.yml"
         regexp: '.*null.*\n'
         replace: ''
       loop: "{{ export_objects }}"
@@ -95,7 +95,7 @@
     - name: Fix project file by removing null credentials
       when: item == "credentials"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/projects.yml"
+        path: "{{ config_dir }}/projects.yml"
         regexp: ' +credential: null'
         replace: ''
       loop: "{{ export_objects }}"
@@ -103,7 +103,7 @@
     - name: Fix organizations by removing empty EE entries
       when: item == "organizations"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/organizations.yml"
+        path: "{{ config_dir }}/organizations.yml"
         regexp: ' +execution_environments: \[\]'
         replace: ''
       loop: "{{ export_objects }}"
@@ -111,7 +111,7 @@
     - name: Fix organizations by removing null default environment
       when: item == "organizations"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/organizations.yml"
+        path: "{{ config_dir }}/organizations.yml"
         regexp: ' +default_environment: null'
         replace: ''
       loop: "{{ export_objects }}"
@@ -119,7 +119,7 @@
     - name: Fix execution environments file by removing null organizations
       when: item == "execution_environments"
       ansible.builtin.replace:
-        path: "{{ playbook_dir }}/configs/execution_environments.yml"
+        path: "{{ config_dir }}/execution_environments.yml"
         regexp: ' +organization: null'
         replace: ''
       loop: "{{ export_objects }}"
@@ -128,7 +128,7 @@
     # This imports the variable files from the configs directory
     - name: Include vars from config folder
       ansible.builtin.include_vars:
-        dir: configs
+        dir: "{{ config_dir }}"
 ##  ##################################
 
     # the following tasks are modifying the imported variables.
